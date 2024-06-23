@@ -1,10 +1,10 @@
-import HomePage from "./component/Home";
-import './globals.css'
+import Homepage from './component/Home';
+
 
 export default function Home() {
   return (
     <main className="main-wrapper">
-      <HomePage/>
+      <Homepage />
     </main>
   );
 }

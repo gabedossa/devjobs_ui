@@ -1,14 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-
 import Popup from './popup'
-import JobListing from './JobListing'
-import data from '../utils/data.json'
 
 const Homepage = () => {
   const [filterPopUpState, setFilterPopupState] = useState(false);
-  const [mockedListings, setMockedListings] = useState<JobListing[]>(data.jobListings);
 
   const openDialog = () => {
     setFilterPopupState(true);
@@ -40,7 +36,19 @@ const Homepage = () => {
         </div>
       </div>
       <div className="job-listings-section">
-        <JobListing jobsListings={mockedListings} />
+        <div className="job-listing-card">
+          <div className="card-header">
+            Logo da empresa
+          </div>
+          <div className="card-body">
+            idade da postagem | tipo de contrato
+            Titulo da vaga
+            Nome da empresa
+          </div>
+          <div className="card-footer">
+            País da empresa
+          </div>
+        </div>
       </div>
       <div className="load-more-section">
         <div className="load-more-button">
