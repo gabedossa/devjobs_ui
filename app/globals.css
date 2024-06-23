@@ -31,3 +31,42 @@ body {
     text-wrap: balance;
   }
 }
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-section {
+  background: #5964e0;
+  height: 136px;
+  width: 100vw;
+}
+
+.filter-input-section {
+  color: #333;
+  width: 327px;
+  height: 80px;
+  background: #f1f1f1;
+}
+
+.job-listings-section {
+  display: flex;
+}
+
+.job-listing-card {
+  color: #333;
+  margin-top: 16px;
+  width: 327px;
+  background: #f1f1f1;
+  height: 253px;
+}
+
+.load-more-section {
+  display: flex;
+  height: 100px;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
