@@ -1,8 +1,9 @@
 interface PopupProps {
-  state: boolean,
+  state: boolean
   closeDialog: () => void
+  onSearch: (location: string, fullTimeOnly: boolean) => void
 }
 
-interface JobListingProps { 
-  jobsListings: JobListing[],
+interface JobListingProps {
+  jobsListings: JobListing[]
 }
