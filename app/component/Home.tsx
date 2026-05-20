@@ -1,15 +1,56 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Popup from './popup'
 import JobListing from './JobListing'
 import data from '../utils/data.json'
 
+const SunIcon = ({ className }: { className: string }) => (
+  <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="10" r="4" stroke="white" strokeWidth="1.5" />
+    <path
+      d="M10 1v2M10 17v2M1 10h2M17 10h2M3.22 3.22l1.42 1.42M15.36 15.36l1.42 1.42M3.22 16.78l1.42-1.42M15.36 4.64l1.42-1.42"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+)
+
+const MoonIcon = ({ className }: { className: string }) => (
+  <svg className={className} width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path
+      d="M15.5 10.5A7 7 0 0 1 7.5 2.5a7 7 0 1 0 8 8Z"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const Homepage = () => {
+  const [isDark, setIsDark] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [popupOpen, setPopupOpen] = useState(false)
   const [titleFilter, setTitleFilter] = useState('')
   const [locationFilter, setLocationFilter] = useState('')
   const [fullTimeOnly, setFullTimeOnly] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const dark = saved === 'dark' || (!saved && prefersDark)
+    setIsDark(dark)
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+    setMounted(true)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = !isDark
+    setIsDark(next)
+    document.documentElement.dataset.theme = next ? 'dark' : 'light'
+    localStorage.setItem('theme', next ? 'dark' : 'light')
+  }
 
   const handleSearch = (title: string, location: string, fullTime: boolean) => {
     setTitleFilter(title)
@@ -37,12 +78,18 @@ const Homepage = () => {
       <header className="header-section">
         <div className="header-content">
           <span className="logo">devjobs</span>
-          <button className="theme-toggle" aria-label="Toggle theme">
-            <span>☀</span>
+
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-pressed={mounted ? isDark : undefined}
+          >
+            <SunIcon className={`toggle-icon ${!isDark ? 'active' : ''}`} />
             <span className="toggle-track">
-              <span className="toggle-thumb" />
+              <span className={`toggle-thumb${isDark ? ' is-dark' : ''}`} />
             </span>
-            <span>☾</span>
+            <MoonIcon className={`toggle-icon ${isDark ? 'active' : ''}`} />
           </button>
         </div>
       </header>
@@ -66,7 +113,9 @@ const Homepage = () => {
               placeholder="Filter by title, companies…"
               value={titleFilter}
               onChange={e => setTitleFilter(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)}
+              onKeyDown={e =>
+                e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)
+              }
             />
           </div>
 
@@ -89,7 +138,9 @@ const Homepage = () => {
               placeholder="Filter by location…"
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)}
+              onKeyDown={e =>
+                e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)
+              }
             />
           </div>
 
@@ -145,9 +196,7 @@ const Homepage = () => {
       <Popup
         state={popupOpen}
         closeDialog={() => setPopupOpen(false)}
-        onSearch={(location, fullTime) =>
-          handleSearch(titleFilter, location, fullTime)
-        }
+        onSearch={(location, fullTime) => handleSearch(titleFilter, location, fullTime)}
       />
     </div>
   )
