@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 
 const logoStyles: Record<string, { bg: string; label: string }> = {
   scoot:          { bg: '#19202d', label: 'S' },
@@ -12,20 +13,46 @@ const logoStyles: Record<string, { bg: string; label: string }> = {
   coffeeeroasters:{ bg: '#7b4700', label: 'C' },
 }
 
-const JobListing = ({ jobsListings }: JobListingProps) => {
+const JobListing = ({ jobsListings, onJobClick }: JobListingProps) => {
   return (
     <>
       {jobsListings.map(job => {
-        const style = logoStyles[job.logo] ?? { bg: '#5964e0', label: job.company_name[0] }
+        const style = logoStyles[job.logo] ?? { bg: '#5964e0', label: job.company_name[0]?.toUpperCase() ?? '?' }
 
         return (
-          <div key={String(job.id)} className="job-listing-card">
+          <div
+            key={String(job.id)}
+            className="job-listing-card"
+            onClick={() => onJobClick(job)}
+            style={{ cursor: 'pointer' }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && onJobClick(job)}
+          >
             <div
               className="card-logo"
-              style={{ background: style.bg }}
+              style={job.logo_url ? { background: '#f4f6f8', padding: '4px' } : { background: style.bg }}
               aria-hidden="true"
             >
-              {style.label}
+              {job.logo_url ? (
+                <Image
+                  src={job.logo_url}
+                  alt={job.company_name}
+                  width={48}
+                  height={48}
+                  style={{ objectFit: 'contain', borderRadius: '4px' }}
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement
+                    target.style.display = 'none'
+                    if (target.parentElement) {
+                      target.parentElement.style.background = style.bg
+                      target.parentElement.textContent = style.label
+                    }
+                  }}
+                />
+              ) : (
+                style.label
+              )}
             </div>
 
             <div className="card-meta">

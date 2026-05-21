@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react'
 
-const Popup = ({ state, closeDialog, onSearch }: PopupProps) => {
-  const [location, setLocation] = useState('')
+const Popup = ({ state, closeDialog, onSearch, countries }: PopupProps) => {
+  const [country, setCountry] = useState('')
   const [fullTimeOnly, setFullTimeOnly] = useState(false)
 
   const handleSearch = () => {
-    onSearch(location, fullTimeOnly)
+    onSearch(country, fullTimeOnly)
     closeDialog()
   }
 
@@ -29,14 +29,17 @@ const Popup = ({ state, closeDialog, onSearch }: PopupProps) => {
                 <circle cx="8.5" cy="10" r="2" stroke="#6E8098" strokeWidth="1.5" />
               </svg>
             </span>
-            <input
-              type="text"
-              placeholder="Filter by location…"
-              value={location}
-              onChange={e => setLocation(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
+            <select
+              value={country}
+              onChange={e => setCountry(e.target.value)}
+              className="country-select"
               autoFocus
-            />
+            >
+              <option value="">All countries</option>
+              {countries.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
           <div className="popup-lower">

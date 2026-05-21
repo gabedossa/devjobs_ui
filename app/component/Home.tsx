@@ -1,9 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
+import LogoBranca from '../img/Logo_Branca.png'
 import Popup from './popup'
 import JobListing from './JobListing'
-import data from '../utils/data.json'
+import JobModal from './JobModal'
+
+const PAGE_SIZE = 12
 
 const SunIcon = ({ className }: { className: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -33,8 +37,17 @@ const Homepage = () => {
   const [mounted, setMounted] = useState(false)
   const [popupOpen, setPopupOpen] = useState(false)
   const [titleFilter, setTitleFilter] = useState('')
-  const [locationFilter, setLocationFilter] = useState('')
+  const [countryFilter, setCountryFilter] = useState('')
   const [fullTimeOnly, setFullTimeOnly] = useState(false)
+
+  const [allJobs, setAllJobs] = useState<JobListing[]>([])
+  const [availableCountries, setAvailableCountries] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [offset, setOffset] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [selectedJob, setSelectedJob] = useState<JobListing | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem('theme')
@@ -45,6 +58,27 @@ const Homepage = () => {
     setMounted(true)
   }, [])
 
+  const fetchJobs = useCallback(async (currentOffset: number, append: boolean) => {
+    try {
+      const res = await fetch(`/api/jobs?limit=${PAGE_SIZE}&offset=${currentOffset}`)
+      if (!res.ok) throw new Error('Failed to fetch jobs')
+      const data = await res.json()
+      setAllJobs(prev => append ? [...prev, ...data.jobs] : data.jobs)
+      if (!append && data.countries) setAvailableCountries(data.countries)
+      setHasMore(currentOffset + PAGE_SIZE < data.total)
+      setOffset(currentOffset + PAGE_SIZE)
+    } catch {
+      setError('Não foi possível carregar as vagas. Tente novamente.')
+    } finally {
+      setLoading(false)
+      setLoadingMore(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchJobs(0, false)
+  }, [fetchJobs])
+
   const toggleTheme = () => {
     const next = !isDark
     setIsDark(next)
@@ -52,32 +86,36 @@ const Homepage = () => {
     localStorage.setItem('theme', next ? 'dark' : 'light')
   }
 
-  const handleSearch = (title: string, location: string, fullTime: boolean) => {
+  const handleSearch = (title: string, country: string, fullTime: boolean) => {
     setTitleFilter(title)
-    setLocationFilter(location)
+    setCountryFilter(country)
     setFullTimeOnly(fullTime)
   }
 
-  const filteredJobs = data.jobListings.filter(job => {
+  const handleLoadMore = () => {
+    setLoadingMore(true)
+    fetchJobs(offset, true)
+  }
+
+  const filteredJobs = allJobs.filter(job => {
     const matchesTitle =
       !titleFilter ||
       job.job_title.toLowerCase().includes(titleFilter.toLowerCase()) ||
       job.company_name.toLowerCase().includes(titleFilter.toLowerCase())
 
-    const matchesLocation =
-      !locationFilter ||
-      job.location.toLowerCase().includes(locationFilter.toLowerCase())
+    const matchesCountry =
+      !countryFilter || job.country === countryFilter
 
     const matchesType = !fullTimeOnly || job.employment_type === 'Full Time'
 
-    return matchesTitle && matchesLocation && matchesType
+    return matchesTitle && matchesCountry && matchesType
   })
 
   return (
     <div className="homepage-wrapper">
       <header className="header-section">
         <div className="header-content">
-          <span className="logo">devjobs</span>
+          <Image src={LogoBranca} alt="Hirenix" height={120} style={{ width: 'auto', display: 'block' }} priority />
 
           <button
             className="theme-toggle"
@@ -113,15 +151,13 @@ const Homepage = () => {
               placeholder="Filter by title, companies…"
               value={titleFilter}
               onChange={e => setTitleFilter(e.target.value)}
-              onKeyDown={e =>
-                e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)
-              }
+              onKeyDown={e => e.key === 'Enter' && handleSearch(titleFilter, countryFilter, fullTimeOnly)}
             />
           </div>
 
           <div className="filter-divider desktop-only" />
 
-          <div className="filter-field desktop-only">
+          <div className="filter-field filter-field--select desktop-only">
             <span className="filter-icon">
               <svg width="17" height="24" viewBox="0 0 17 24" fill="none">
                 <path
@@ -133,15 +169,16 @@ const Homepage = () => {
                 <circle cx="8.5" cy="10" r="2" stroke="#5964E0" strokeWidth="1.5" />
               </svg>
             </span>
-            <input
-              type="text"
-              placeholder="Filter by location…"
-              value={locationFilter}
-              onChange={e => setLocationFilter(e.target.value)}
-              onKeyDown={e =>
-                e.key === 'Enter' && handleSearch(titleFilter, locationFilter, fullTimeOnly)
-              }
-            />
+            <select
+              value={countryFilter}
+              onChange={e => setCountryFilter(e.target.value)}
+              className="country-select"
+            >
+              <option value="">All countries</option>
+              {availableCountries.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
           <div className="filter-divider desktop-only" />
@@ -173,7 +210,7 @@ const Homepage = () => {
             </button>
             <button
               className="search-btn"
-              onClick={() => handleSearch(titleFilter, locationFilter, fullTimeOnly)}
+              onClick={() => handleSearch(titleFilter, countryFilter, fullTimeOnly)}
             >
               Search
             </button>
@@ -182,22 +219,37 @@ const Homepage = () => {
       </div>
 
       <main className="job-listings-section">
-        {filteredJobs.length === 0 ? (
+        {loading ? (
+          <div className="empty-state">Carregando vagas...</div>
+        ) : error ? (
+          <div className="empty-state">{error}</div>
+        ) : filteredJobs.length === 0 ? (
           <div className="empty-state">No jobs found. Try adjusting your filters.</div>
         ) : (
-          <JobListing jobsListings={filteredJobs} />
+          <JobListing jobsListings={filteredJobs} onJobClick={setSelectedJob} />
         )}
       </main>
 
-      <div className="load-more-section">
-        <button className="load-more-button">Load More</button>
-      </div>
+      {!loading && !error && hasMore && (
+        <div className="load-more-section">
+          <button
+            className="load-more-button"
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+          >
+            {loadingMore ? 'Carregando...' : 'Load More'}
+          </button>
+        </div>
+      )}
 
       <Popup
         state={popupOpen}
         closeDialog={() => setPopupOpen(false)}
-        onSearch={(location, fullTime) => handleSearch(titleFilter, location, fullTime)}
+        onSearch={(country, fullTime) => handleSearch(titleFilter, country, fullTime)}
+        countries={availableCountries}
       />
+
+      <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
   )
 }
