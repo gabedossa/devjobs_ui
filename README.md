@@ -76,7 +76,7 @@
 <h2>🛠 Tech Stack</h2>
 <pre>
 ┌─────────────────────────────────────────────────────────┐
-│  Next.js 14  │  TypeScript  │  Tailwind CSS  │  Vercel │
+│  Next.js 14  │  TypeScript  │  Tailwind CSS  │  Vercel  │
 └─────────────────────────────────────────────────────────┘
 </pre>
 <table>
