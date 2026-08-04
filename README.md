@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+💼 DevJobs UI
+A modern developer job board built with Next.js 14, TypeScript & Tailwind CSS
+https://nextjs.org/
+https://www.typescriptlang.org/
+https://tailwindcss.com/
+https://vercel.com/
+🚀 Live Demo · 📁 Repository
+</div>
+📸 Preview
+<div align="center">
+<!-- TODO: Substitua pela screenshot real do seu projeto -->
+<img src="./public/preview.png" alt="DevJobs UI Preview" width="800" />
+Homepage with job listings, search and filters
+</div>
+✨ Features
+🔍 Search & Filter — Find jobs by title, company, location or contract type
+🌙 Dark / Light Mode — Fully responsive theme toggle
+📱 Mobile-First — Optimized for all screen sizes
+⚡ Next.js 14 App Router — Server Components, streaming and fast navigation
+🎨 Tailwind CSS — Utility-first styling with custom design tokens
+🔒 Type-Safe — Full TypeScript coverage across the codebase
+🔄 Dynamic Routing — Individual job detail pages with clean URLs
+🖼️ Optimized Images — Next.js Image component for performance
+🛠 Tech Stack
+Table
+Layer	Technology
+Framework	Next.js 14 (App Router)
+Language	TypeScript
+Styling	Tailwind CSS
+Font	Inter (via next/font)
+Deployment	Vercel
+🚀 Getting Started
+Prerequisites
+Node.js 18+
+npm / yarn / pnpm
+Installation
+bash
+# Clone the repository
+git clone https://github.com/gabedossa/devjobs_ui.git
 
-## Getting Started
+# Navigate to the project
+cd devjobs_ui
 
-First, run the development server:
+# Install dependencies
+npm install
 
-```bash
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Open http://localhost:3000 in your browser.
+📁 Project Structure
+plain
+devjobs_ui/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Homepage (job listings)
+│   ├── layout.tsx         # Root layout with providers
+│   └── [id]/              # Dynamic job detail routes
+├── components/            # Reusable UI components
+│   ├── JobCard.tsx
+│   ├── SearchBar.tsx
+│   └── FilterPanel.tsx
+├── data/                  # Static job data (or API layer)
+│   └── jobs.json
+├── types/                 # TypeScript interfaces
+│   └── job.ts
+├── public/                # Static assets
+├── tailwind.config.ts     # Tailwind customization
+└── next.config.js         # Next.js configuration
+🧪 Scripts
+Table
+Command	Description
+npm run dev	Start development server
+npm run build	Build for production
+npm run start	Start production server
+npm run lint	Run ESLint
+🎯 What I Learned
+Building dynamic routes with Next.js 14 App Router
+Creating reusable, typed components with TypeScript
+Implementing responsive layouts with Tailwind CSS
+Managing global state for filters and theme
+Optimizing images and fonts for Core Web Vitals
+🌐 Deployment
+This project is deployed on Vercel.
+https://vercel.com/new/clone?repository-url=https://github.com/gabedossa/devjobs_ui
+📫 Connect
+Built by Gabriel Vitor
+💼 LinkedIn
+🎨 Behance
+📧 gabrielvinces2@gmail.com
+<div align="center">
+⭐ If you found this project useful, consider giving it a star!
+</div>
