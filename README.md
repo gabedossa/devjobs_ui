@@ -50,7 +50,7 @@ Feature	Description
 🛠 Tech Stack
 plain
 ┌─────────────────────────────────────────────────────────┐
-│  Next.js 14  │  TypeScript  │  Tailwind CSS  │  Vercel  │
+│  Next.js 14  │  TypeScript  │  Tailwind CSS  │  Vercel │
 └─────────────────────────────────────────────────────────┘
 Framework: Next.js 14 (App Router)
 Language: TypeScript
